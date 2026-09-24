@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# commit the env template, never real values
+!.env.example
+
+# eval run outputs are local; commit selected ones manually
+/evals/results/*
+!/evals/results/.gitkeep
