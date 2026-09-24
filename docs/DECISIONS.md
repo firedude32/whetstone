@@ -57,3 +57,24 @@ One entry per architectural decision. Newest at the bottom.
 ### D11 — Toolchain versions (2026-09-24)
 **Decision:** Next.js 16.3 (App Router), React 19.2, Tailwind 4, vitest 5, tsx, npm, `@types/node@22`.
 **Why:** These are the current create-next-app defaults. `@types/node` was bumped from 20 to 22 to match Node 22 and satisfy vitest's peer dependency.
+
+### D12 — Strict policy schema; base prompt as a file (2026-09-24)
+**Decision:**
+- Frontmatter is validated with a `.strict()` zod schema, plus cross-field rules (for example, `input_classifier` requires `classifier_label`).
+- `policies/_base.md` holds the identity prompt, and `_invariants.md` holds the safety rules.
+- Files starting with `_` are not toggles.
+
+**Why:** Typos must fail loudly. The base prompt belongs with the policies so `/policies` can show the *complete* prompt, not just the toggle parts.
+
+### D13 — `compileSystemPrompt` takes a third `frame` argument (2026-09-24)
+**Decision:** The signature is `(policies, enabledIds, frame)`, not the spec's `(policies, enabledIds)`.
+**Alternatives:** Have the compiler read `_base.md` and `_invariants.md` from disk itself.
+**Why:** Keeps the compiler a pure function (no file I/O), which makes it trivially testable.
+
+### D14 — App-level toggles get chat-level tests (2026-09-24)
+**Decision:**
+- `daily-limit` tests use a `context.messages_today` field.
+- `cooling-off` tests check that the chat never claims a setting changed and keeps following restrictions when told they've lapsed.
+- Tests can carry `history` for multi-turn escalation.
+
+**Why:** Every toggle needs measurable evals. The real settings logic for cooling-off (`isLoosening`) is unit-tested in Phase 5.

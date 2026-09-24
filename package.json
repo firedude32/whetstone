@@ -12,12 +12,15 @@
     "test:watch": "vitest",
     "chat": "tsx scripts/chat.ts",
     "eval": "tsx evals/run.ts",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "policies": "tsx scripts/policies.ts"
   },
   "dependencies": {
+    "gray-matter": "^4.0.3",
     "next": "16.3.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
