@@ -38,17 +38,15 @@ One judge call before generation handles both the crisis check and classificatio
 ```mermaid
 flowchart TD
   A[User message] --> B{1. Hard limits<br/>daily-limit}
-  B -- over limit --> BX[Limit message<br/>no LLM call]
+  B -- over limit --> BX[Limit message + 988<br/>no LLM call]
   B -- ok --> C[2. Pre-check — one judge call<br/>crisis, labels, task_help, confidence]
-  C -- call/JSON error --> CE[crisis: fail-safe<br/>relax companionship + spiritual,<br/>add resources footer<br/>restrictions: fail CLOSED]
-  C -- crisis = true --> CR[Crisis mode<br/>bypass companionship + spiritual<br/>warm reply + 988]
-  C -- ok --> D{3. Attempt gate<br/>attempt-first on AND task_help<br/>AND &lt; 40 words?}
-  D -- yes --> DX[Ask for your attempt]
-  D -- no --> E{4. Label matches<br/>enabled toggle?}
+  C -- call/JSON error --> CE[Fail closed: no generation<br/>apology + 988 resources<br/>fail open toward help]
+  C -- crisis = true --> CR[Crisis mode<br/>bypass companionship + spiritual<br/>warm reply + 988, no judge]
+  C -- ok --> E{3. Label matches<br/>enabled toggle?}
   E -- yes --> EX[Return that policy's<br/>redirect_message]
-  E -- no --> F[5. Build system prompt<br/>base + invariants + enabled fragments]
-  CR --> F
-  CE --> F
+  E -- no --> D{4. Attempt gate<br/>attempt-first on AND task_help<br/>AND no 40-word attempt yet?}
+  D -- yes --> DX[Ask for your attempt]
+  D -- no --> F[5. Build system prompt<br/>base + invariants + enabled fragments]
   F --> G[6. Generate — MODEL_MAIN<br/>buffered, not streamed]
   G --> H{7. Output judge — MODEL_JUDGE<br/>violations?}
   H -- none --> OK[Return reply]
@@ -61,6 +59,8 @@ flowchart TD
   EX --> L
   DX --> L
   BX --> L
+  CE --> L
+  CR --> L
 ```
 
 ## Enforcement hierarchy

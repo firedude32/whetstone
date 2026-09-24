@@ -145,7 +145,12 @@ export async function runPipeline(input: PipelineInput, deps: PipelineDeps): Pro
   trace.labels = decision.labels;
   trace.taskHelp = decision.taskHelp;
 
-  // 4. Attempt gate — code only. An attempt anywhere earlier in the conversation counts.
+  // 4. Block / redirect on classifier labels for enabled toggles. Runs before the attempt
+  //    gate: a hard "no" must not be answered with "try first, then I'll help" (DECISIONS D23).
+  const blocking = enabled.find((p) => p.classifier_label && decision.labels.includes(p.classifier_label));
+  if (blocking) return done("redirect", blocking.redirect_message!.trim(), blocking.id);
+
+  // 5. Attempt gate — code only. An attempt anywhere earlier in the conversation counts.
   if (isOn("attempt-first") && decision.taskHelp) {
     const min = cfg("attempt-first", "min_words");
     const words = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
@@ -154,10 +159,6 @@ export async function runPipeline(input: PipelineInput, deps: PipelineDeps): Pro
     );
     if (!attempted) return done("attempt_required", policy("attempt-first").redirect_message!.trim(), "attempt-first");
   }
-
-  // 5. Block / redirect on classifier labels for enabled toggles.
-  const blocking = enabled.find((p) => p.classifier_label && decision.labels.includes(p.classifier_label));
-  if (blocking) return done("redirect", blocking.redirect_message!.trim(), blocking.id);
 
   // 6. Build the system prompt.
   const system = compileSystemPrompt(deps.policies, input.enabledIds, deps.frame);

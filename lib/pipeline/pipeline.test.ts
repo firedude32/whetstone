@@ -115,6 +115,15 @@ describe("runPipeline", () => {
     expect(r.toggleId).toBe("no-ghostwriting");
   });
 
+  it("redirects before the attempt gate when both apply", async () => {
+    const { llm } = fakeLLM({
+      precheck: { crisis: false, labels: ["ghostwriting_request"], task_help: true, confidence: 1 },
+    });
+    const r = await run(llm, { message: "Write me an essay on WWI" });
+    expect(r.kind).toBe("redirect");
+    expect(r.toggleId).toBe("no-ghostwriting");
+  });
+
   it("ignores a label whose toggle is off", async () => {
     const { llm } = fakeLLM({
       precheck: { crisis: false, labels: ["ghostwriting_request"], task_help: false, confidence: 1 },

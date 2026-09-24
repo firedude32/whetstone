@@ -115,3 +115,7 @@ One entry per architectural decision. Newest at the bottom.
 ### D22 — attempt-first counts attempts across the conversation (2026-09-24)
 **Decision:** If any user message in the recent history meets the word minimum, follow-up task questions pass.
 **Why:** Otherwise every "what about step 2?" would be blocked after a real attempt. Known weakness: one long message unlocks the rest of the conversation.
+
+### D23 — Redirects run before the attempt gate (2026-09-24)
+**Decision:** Pipeline order is pre-check → classifier redirect → attempt gate, reversing spec §5.
+**Why:** Found in the first live test. "Write me an essay" was answered with "show me your attempt first, then I'll respond," which implies the essay would be written after an attempt. A hard "no" must take priority over "try first."
