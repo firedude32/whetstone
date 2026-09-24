@@ -40,3 +40,20 @@ That's why policies are sorted by id and the compiler follows that order, not th
 
 ## Fail closed on unknown ids (Phase 1)
 If settings say `no-ghostwritng` (typo), the safe response is to crash, not skip it. Skipping would turn a restriction off. This is the first instance of the fail-closed rule the pipeline uses everywhere a restriction is involved.
+
+## Provider interface (Phase 2)
+The pipeline depends on `LLMProvider`, a two-method interface in `lib/llm/types.ts`, not on the Anthropic SDK. That gives you two things:
+1. OpenAI (or anything else) can be swapped in by writing one class.
+2. Tests can pass a **fake** provider that returns scripted answers (`pipeline.test.ts`). This is called a *test double*. It lets you test every pipeline branch, including crisis and judge failure, in milliseconds, for free, deterministically.
+
+## Structured outputs don't remove failure (Phase 2)
+The API can constrain the model to your JSON schema, so "the model returned invalid JSON" mostly disappears. But the call can still refuse, time out, hit `max_tokens`, or return a value that's the right shape but wrong. So the design question isn't "how do I parse this?" but "**what do I do when I have no trustworthy answer?**" That's `resolvePrecheck`: restrictions fail closed, and help for someone in crisis fails open.
+
+## Why the reply is buffered, not streamed (Phase 2)
+Streaming shows words as they're generated, but the output judge needs the *whole* reply before it can pass or fail it. Once text has been streamed to the screen it can't be taken back. So v1 waits: generate, then judge, then show. The cost is latency. A normal reply makes three model calls (pre-check, generate, judge), and a regeneration adds two more. A later fix is to stream to the server, judge in chunks, and release text that has passed.
+
+## Conversation window (Phase 2)
+Each API call resends the conversation, so cost grows with conversation length. v1 sends the last 10 turns and drops older ones. The trade-off: long conversations "forget" their beginning. Later, a cheap model writes a running summary of the dropped turns, which keeps the cost bounded while holding onto the gist.
+
+## Unit economics (Phase 2)
+Every call's token counts are priced in `lib/llm/pricing.ts` and summed per message. The Inspect panel and the session total show it live. Rough shape: Haiku judge calls cost fractions of a cent, and the Sonnet reply dominates. Cost per message × messages per user per month is what a subscription has to cover.

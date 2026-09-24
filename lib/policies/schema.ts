@@ -61,12 +61,15 @@ export type PolicyFrontmatter = z.infer<typeof PolicyFrontmatter>;
 
 /** Body sections, by the heading text used in the Markdown files. */
 export const SECTION = {
+  classifier: "Classifier definition",
   prompt: "System prompt fragment",
   judge: "Output judge criteria",
   rationale: "Rationale",
 } as const;
 
 export type Policy = PolicyFrontmatter & {
+  /** What the pre-check classifier should label, if enforcement includes input_classifier. */
+  classifierDefinition: string | null;
   /** Text injected into the system prompt, if enforcement includes system_prompt. */
   promptFragment: string | null;
   /** What the output judge checks for, if enforcement includes output_judge. */

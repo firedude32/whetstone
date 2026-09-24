@@ -78,3 +78,40 @@ One entry per architectural decision. Newest at the bottom.
 - Tests can carry `history` for multi-turn escalation.
 
 **Why:** Every toggle needs measurable evals. The real settings logic for cooling-off (`isLoosening`) is unit-tested in Phase 5.
+
+### D15 — No GitHub Pages; run locally now, deploy to Vercel later (2026-09-24)
+**Decision:** The chat runs as a Next.js server, locally via `npm run dev` for now and on Vercel later.
+**Alternatives:** GitHub Pages (static hosting).
+**Why:** A static site has no server, so the browser would have to call Anthropic with the API key embedded in the page, where anyone could copy it and spend on it. That breaks the non-negotiable security rule.
+
+### D16 — Temporary stand-ins for unfinished exercises (2026-09-24)
+**Decision:** `lib/exercises.ts` calls Ethan's implementation and falls back to `lib/standins.ts` only while it still throws "not implemented". It logs a warning once per function.
+**Why:** Ethan wanted a testable UI before finishing the exercises, without losing them. Delete both files once all `TODO(ethan)` tests pass.
+
+### D17 — Structured outputs for judge calls (2026-09-24)
+**Decision:** The pre-check and output judge use the API's structured outputs (`messages.parse` with a zod schema).
+**Why:** The API constrains the JSON shape and the SDK validates it, so malformed JSON is now rare. Failure is still possible (refusal, truncation, network errors, timeouts), so every judge call keeps a fail direction. The Phase 2 exercise moved from "parse the JSON" to "decide what a failure means" (`resolvePrecheck`).
+
+### D18 — Crisis handling when the daily limit is reached (2026-09-24)
+**Decision:** The daily-limit message always includes 988 and 911. No model is called after the limit, even for a possible crisis.
+**Alternatives:** Run the pre-check after the limit to detect a crisis.
+**Why:** That would make the limit bypassable and costly: every over-limit message would be a paid model call. Always showing the resources meets invariant 1 without any call.
+
+### D19 — Crisis mode skips the output judge (2026-09-24)
+**Decision:** Crisis replies are not judged or regenerated. If the reply lacks 988, it is appended.
+**Why:** A restriction must never replace a crisis reply with a generic fallback.
+
+### D20 — Pre-check failure shows resources, no generation (2026-09-24; refines D3)
+**Decision:** If the pre-check fails, the reply is an apology plus crisis resources, and nothing is generated.
+**Why:** Simpler and more predictable than generating with some toggles relaxed. It still fails closed for restrictions and fails open toward help.
+
+### D21 — Dev-mode settings and usage (2026-09-24)
+**Decision:**
+- Until accounts exist, toggles live in the browser (localStorage) and are sent with each request.
+- The daily count is kept in the server's memory.
+
+**Why:** This makes the UI testable today. It is not secure: anyone can flip toggles in DevTools. Phases 4–6 move both into Supabase, where the server reads settings itself.
+
+### D22 — attempt-first counts attempts across the conversation (2026-09-24)
+**Decision:** If any user message in the recent history meets the word minimum, follow-up task questions pass.
+**Why:** Otherwise every "what about step 2?" would be blocked after a real attempt. Known weakness: one long message unlocks the rest of the conversation.

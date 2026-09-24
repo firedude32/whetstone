@@ -31,6 +31,7 @@ export function parsePolicy(source: string, file: string): Policy {
 
   return {
     ...p,
+    classifierDefinition: p.enforcement.includes("input_classifier") ? need(SECTION.classifier) : null,
     promptFragment: p.enforcement.includes("system_prompt") ? need(SECTION.prompt) : null,
     judgeCriteria: p.enforcement.includes("output_judge") ? need(SECTION.judge) : null,
     rationale: need(SECTION.rationale),
@@ -69,4 +70,12 @@ export function loadPromptFrame(dir = POLICIES_DIR): PromptFrame {
   if (!base) throw new Error(`_base.md: missing "## ${SECTION.prompt}"`);
   if (!invariants) throw new Error(`_invariants.md: missing "## ${SECTION.prompt}"`);
   return { base, invariants };
+}
+
+/** The invariants' crisis-mode instructions, used in place of normal toggles when the pre-check flags a crisis. */
+export function loadCrisisGuidance(dir = POLICIES_DIR): string {
+  const body = matter(fs.readFileSync(path.join(dir, "_invariants.md"), "utf8")).content;
+  const text = parseSections(body)["Crisis response guidance"];
+  if (!text) throw new Error(`_invariants.md: missing "## Crisis response guidance"`);
+  return text;
 }

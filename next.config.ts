@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Policies are read from disk at runtime; make sure deploys ship them.
+  outputFileTracingIncludes: {
+    "/*": ["./policies/**/*.md"],
+  },
 };
 
 export default nextConfig;

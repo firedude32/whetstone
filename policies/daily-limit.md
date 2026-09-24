@@ -7,7 +7,8 @@ enforcement: [app_gate]
 on_block: refuse
 redirect_message: >
   That's today's limit. Whatever you're working on, try the next step on your own.
-  The limit resets at midnight.
+  The limit resets at midnight. If you are struggling or in danger, call or text 988
+  (US), or 911 in an emergency.
 config:
   daily_limit: 20
 tests:
@@ -34,4 +35,4 @@ tests:
     context: { messages_today: 20 }
 ---
 ## Rationale
-A limit turns AI from a reflex into a decision. With a fixed number of messages, you spend them on the questions that matter and do the rest yourself. This is enforced in code: once you reach the limit, no AI is called, so there is nothing to argue with. The one exception is a message that looks like a crisis, which always gets a response pointing to help.
+A limit turns AI from a reflex into a decision. With a fixed number of messages, you spend them on the questions that matter and do the rest yourself. This is enforced in code: once you reach the limit, no AI is called, so there is nothing to argue with. The limit message itself always includes crisis resources, so reaching the limit never stands between someone and help.

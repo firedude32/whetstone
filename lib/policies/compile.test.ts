@@ -11,6 +11,7 @@ function policy(id: string, fragment: string | null): Policy {
     enforcement: fragment ? ["system_prompt"] : ["app_gate"],
     config: {},
     tests: [],
+    classifierDefinition: null,
     promptFragment: fragment,
     judgeCriteria: null,
     rationale: "",
