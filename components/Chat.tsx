@@ -63,7 +63,11 @@ export default function Chat({ policies }: { policies: PolicySummary[] }) {
     } catch {}
   }, [enabled, dailyLimit]);
 
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [entries, pending]);
+  // Braces matter: an effect's return value is treated as its cleanup function, and
+  // scrollIntoView() returns a Promise in newer browsers.
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [entries, pending]);
 
   const toggle = (id: string) =>
     setEnabled((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));

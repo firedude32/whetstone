@@ -57,3 +57,6 @@ Each API call resends the conversation, so cost grows with conversation length. 
 
 ## Unit economics (Phase 2)
 Every call's token counts are priced in `lib/llm/pricing.ts` and summed per message. The Inspect panel and the session total show it live. Rough shape: Haiku judge calls cost fractions of a cent, and the Sonnet reply dominates. Cost per message × messages per user per month is what a subscription has to cover.
+
+## Effect cleanup and implicit returns (bug, Phase 2)
+React treats whatever a `useEffect` callback returns as its cleanup function. `useEffect(() => x.scrollIntoView())` has no braces, so it *returns* the call's result. Newer browsers made `scrollIntoView()` return a Promise, so React tried to call a Promise on cleanup and crashed with "destroy is not a function." The rule: write effect bodies in braces unless you're deliberately returning a cleanup function.
