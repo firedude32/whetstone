@@ -60,3 +60,6 @@ Every call's token counts are priced in `lib/llm/pricing.ts` and summed per mess
 
 ## Effect cleanup and implicit returns (bug, Phase 2)
 React treats whatever a `useEffect` callback returns as its cleanup function. `useEffect(() => x.scrollIntoView())` has no braces, so it *returns* the call's result. Newer browsers made `scrollIntoView()` return a Promise, so React tried to call a Promise on cleanup and crashed with "destroy is not a function." The rule: write effect bodies in braces unless you're deliberately returning a cleanup function.
+
+## Server page, client island (homepage)
+`app/page.tsx` is a Server Component: it reads `policies/*.md` from disk and hands plain data (file names, text, test counts) to `components/Landing.tsx`, which is marked `"use client"` because it holds state (the demo switches, tabs, billing toggle). Only the client part ships JavaScript to the browser; the file system never does. The ask box is a plain `<form action="/chat">` with a `draft` field, so it works even before JavaScript loads. The browser builds `/chat?draft=...` itself, and the chat page reads `searchParams` on the server to prefill the box.

@@ -119,3 +119,11 @@ One entry per architectural decision. Newest at the bottom.
 ### D23 — Redirects run before the attempt gate (2026-09-24)
 **Decision:** Pipeline order is pre-check → classifier redirect → attempt gate, reversing spec §5.
 **Why:** Found in the first live test. "Write me an essay" was answered with "show me your attempt first, then I'll respond," which implies the essay would be written after an attempt. A hard "no" must take priority over "try first."
+
+### D24 — Public homepage at `/`, chat moves to `/chat` (2026-10-14)
+**Decision:** `/` is the marketing homepage from the design mockup. The chat moved to `/chat`. The homepage ask box prefills the chat (`/chat?draft=...`) and never sends on its own.
+**Why:** Visitors should see what Whetstone is before an empty chat box. Prefill, not auto-send, keeps "attempt first" honest: the person still presses send.
+**Notes:**
+- The policy tabs show the real files (frontmatter plus system prompt fragment), and the test line shows real counts from the policy files. The mockup's sample policy text and "[PASS RATE] of [N]" placeholder were not used.
+- The homepage switches are a demo only. They do not change chat settings.
+- Open items from the mockup: no yearly Family price (yearly view shows $15/mo with a note), and no Privacy or Terms pages (links point to the top of the page).

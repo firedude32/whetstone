@@ -11,7 +11,7 @@ restrict how you use the AI. The toggles are the product; the chat is where they
 npm install
 cp .env.example .env.local   # then fill in values
 npm run check                # typecheck + lint + tests
-npm run dev                  # web app at http://localhost:3000
+npm run dev                  # homepage at http://localhost:3000, chat at /chat
 ```
 
 ## Scripts

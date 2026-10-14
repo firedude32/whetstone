@@ -19,7 +19,7 @@ export default function PoliciesPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-12">
       <p className="text-sm">
-        <Link href="/" className="text-ink-2 underline underline-offset-4">
+        <Link href="/chat" className="text-ink-2 underline underline-offset-4">
           ← Back to chat
         </Link>
       </p>

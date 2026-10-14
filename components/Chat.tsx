@@ -31,14 +31,14 @@ const KIND_LABEL: Partial<Record<ResultKind, string>> = {
   crisis: "Support",
 };
 
-export default function Chat({ policies }: { policies: PolicySummary[] }) {
+export default function Chat({ policies, initialDraft = "" }: { policies: PolicySummary[]; initialDraft?: string }) {
   const byId = Object.fromEntries(policies.map((p) => [p.id, p]));
   const defaultLimit = byId["daily-limit"]?.dailyLimit ?? 20;
 
   const [enabled, setEnabled] = useState<string[]>(() => policies.filter((p) => p.defaultOn).map((p) => p.id));
   const [dailyLimit, setDailyLimit] = useState(defaultLimit);
   const [entries, setEntries] = useState<Entry[]>([]);
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState(initialDraft);
   const [pending, setPending] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [usedToday, setUsedToday] = useState<number | null>(null);
@@ -111,7 +111,9 @@ export default function Chat({ policies }: { policies: PolicySummary[] }) {
     <div className="flex flex-1 flex-col">
       <header className="border-b border-rule">
         <div className="mx-auto flex max-w-3xl items-baseline justify-between px-4 py-4">
-          <h1 className="font-display text-2xl tracking-wide">Whetstone</h1>
+          <h1 className="font-display text-2xl tracking-wide">
+            <Link href="/">Whetstone</Link>
+          </h1>
           <nav className="flex gap-5 text-sm text-ink-2">
             <Link href="/policies" className="underline-offset-4 hover:underline">
               Policies

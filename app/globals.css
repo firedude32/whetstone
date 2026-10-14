@@ -32,6 +32,38 @@
   --font-display: var(--font-garamond), Georgia, serif;
 }
 
+/* The public homepage is always dark: night sky, bone text, one gold accent. */
+@theme {
+  --color-night: #0e1116;
+  --color-panel: #161b22;
+  --color-line: #232a33;
+  --color-edge: #2e3641;
+  --color-steel: #5a6370;
+  --color-dim: #8b929c;
+  --color-muted: #a8a397;
+  --color-soft: #b9b3a6;
+  --color-mist: #c9c3b6;
+  --color-sand: #d9d2c4;
+  --color-bone: #ece6da;
+  --color-gold: #c9a86a;
+  --color-gold-light: #e2cb98;
+}
+
+@keyframes ws-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes ws-breathe {
+  from { transform: scale(1); }
+  to { transform: scale(1.07) translateY(-1.5%); }
+}
+.ws-waves { animation: ws-drift 70s linear infinite; }
+.ws-marquee { animation: ws-drift 45s linear infinite; }
+.ws-breathe { animation: ws-breathe 26s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) {
+  .ws-waves, .ws-marquee, .ws-breathe { animation: none; }
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
